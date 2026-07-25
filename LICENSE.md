@@ -1,3 +1,3 @@
-**Please check original p4tin/goaws LICENSE**
+**Please check original Admiral-Piett/goaws LICENSE**
 
-<https://github.com/p4tin/goaws/blob/master/LICENSE.md>
+<https://github.com/Admiral-Piett/goaws/blob/master/LICENSE.md>
