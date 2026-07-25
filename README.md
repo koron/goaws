@@ -4,7 +4,7 @@
 [![Actions/Go](https://github.com/koron/goaws/workflows/Go/badge.svg)](https://github.com/koron/goaws/actions?query=workflow%3AGo)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/koron/goaws)
 
-This is convenience package to install [Admiral-Piett/goaws][goaws] by using `go get`.
+This is convenience package to install [Admiral-Piett/goaws][goaws] by using `go install`.
 
 You can install/update `goaws` command, like this:
 
