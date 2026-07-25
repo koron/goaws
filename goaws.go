@@ -6,20 +6,22 @@ import (
 	"os"
 	"time"
 
-	"github.com/p4tin/goaws/app"
+	"github.com/Admiral-Piett/goaws/app/models"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/p4tin/goaws/app/conf"
-	"github.com/p4tin/goaws/app/gosqs"
-	"github.com/p4tin/goaws/app/router"
+	"github.com/Admiral-Piett/goaws/app/conf"
+	"github.com/Admiral-Piett/goaws/app/gosqs"
+	"github.com/Admiral-Piett/goaws/app/router"
 )
 
 func main() {
 	var filename string
 	var debug bool
+	var loglevel string
 	flag.StringVar(&filename, "config", "", "config file location + name")
-	flag.BoolVar(&debug, "debug", false, "debug log level (default Warning)")
+	flag.BoolVar(&debug, "debug", false, "set debug log level")
+	flag.StringVar(&loglevel, "loglevel", "info", "log level (default info)")
 	flag.Parse()
 
 	log.SetFormatter(&log.JSONFormatter{})
@@ -28,7 +30,13 @@ func main() {
 	if debug {
 		log.SetLevel(log.DebugLevel)
 	} else {
-		log.SetLevel(log.InfoLevel)
+		level, err := log.ParseLevel(loglevel)
+		if err != nil {
+			log.SetLevel(log.InfoLevel)
+			log.Warnf("Failed to parse loglevel %v, defaulting to info", loglevel)
+		} else {
+			log.SetLevel(level)
+		}
 	}
 
 	env := "Local"
@@ -38,8 +46,8 @@ func main() {
 
 	portNumbers := conf.LoadYamlConfig(filename, env)
 
-	if app.CurrentEnvironment.LogToFile {
-		filename := app.CurrentEnvironment.LogFile
+	if models.CurrentEnvironment.LogToFile {
+		filename := models.CurrentEnvironment.LogFile
 		file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err == nil {
 			log.SetOutput(file)
@@ -50,7 +58,7 @@ func main() {
 
 	r := router.New()
 
-	quit := make(chan struct{})
+	quit := make(chan bool, 0)
 	go gosqs.PeriodicTasks(1*time.Second, quit)
 
 	if len(portNumbers) == 1 {
